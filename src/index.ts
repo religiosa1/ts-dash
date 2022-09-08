@@ -3,3 +3,4 @@ export type { PipeResult, PipeFn, PipeArgs, LastPipeItem, PipeInit } from "./pip
 
 export { numericValues, stringValues, enumValues } from "./enum";
 export type { Numeric, Stringic} from "./enum";
+export * from "./iter";
