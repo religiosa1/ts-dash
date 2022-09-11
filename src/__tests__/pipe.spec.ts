@@ -27,8 +27,16 @@ describe("pipe/flow", () => {
     );
   });
 
-// const b = flow(
-//   (arg: number) => arg,
-//   (arg: number) => String(arg)
-// );
+  it("flow creates a piping function", () => {
+    const processer = flow(
+      (x) => x * 2,
+      (x) => String(x)
+    );
+
+    const res1 = processer(2);
+    const res2 = processer(3);
+
+    expect(res1).toBe("4");
+    expect(res2).toBe("6");
+  });
 });

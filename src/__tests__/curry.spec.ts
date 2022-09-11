@@ -3,7 +3,7 @@ import { curry } from "../curry";
 
 describe("curry", () => {
   it("returns a curried function", () => {
-    const sum = curry((a, b) => a + b);
+    const sum = curry((a: number, b: number) => a + b);
     const res1 = sum(2, 3);
     const res2 = sum(2)(3);
     expect(res1).toEqual(res2);
