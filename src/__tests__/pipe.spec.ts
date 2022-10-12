@@ -15,9 +15,16 @@ describe("pipe/flow", () => {
   it("controls pipe handlers argument types", () => {
     pipe(
       2,
-      (x: number) => x * 2,
-      (x: number) => String(x)
+      (x) => x * 2,
+      (x) => String(x)
     );
+
+    // TODO investigate why it does't dail?
+    // pipe(
+    //   2,
+    //   (x) => Number(x * 2),
+    //   (x: string) => String(x)
+    // );
 
     pipe(
       2,
