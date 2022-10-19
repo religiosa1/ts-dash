@@ -88,8 +88,108 @@ const res2 = processer(3); // "6"
 
 ### Curry
 Strictly-typed auto-currying function.
+Please notice, this won't work with generic functions, so you'll have to
+curry them manually.
 
-TODO
+```ts
+function reduce<TCol, TRet>(
+  reducer: (previous: TRet, current: TCol, index: number) => TRet,
+  initValue: TRet,
+  collection: Iterable<TCol>
+): TRet;
+// Curry with reducer and initial value
+function reduce<TCol, TRet>(
+  reducer: (previous: TRet, current: TCol, index: number) => TRet,
+  initValue: TRet
+): (collection: Iterable<TCol>) => TRet;
+// Reducer only curry
+function reduce<TCol, TRet>(
+  reducer: (previous: TRet, current: TCol, index: number) => TRet,
+): Curried<(initValue: TRet, collection: Iterable<TCol>) => TRet>;
+```
+
+### iterator-helpers
+
+Your good old map, filter, reduce, zip and slice, but curried and having
+the lambda handler as the first param, which makes them much more suitable
+for usage in pipe/flow function or as callback handler.
+
+here is an example, how it can be used in pipe (using curry):
+
+```ts
+import { pipe, map, filter } from "ts-dash";
+
+// yes, this can be done without any pipe, it's just an example
+pipe(
+  [1, 2, 3, 4, 5, 6],
+  map((i) => i * 2),
+  filter((i) => i % 3 === 0)
+); // [6, 12]
+```
+
+#### map
+
+```ts
+function map<TArg, TRet>(
+  handler: (item: TArg, index: number) => TRet,
+  collection: Iterable<TArg>
+): TRet[];
+
+// curried
+function map<TArg, TRet>(
+  handler: (item: TArg, index: number) => TRet
+): ((col: Iterable<TArg>) => TRet[]);
+```
+
+#### filter
+
+```ts
+function filter<TArg>(
+  predicate: (item: TArg, index: number) => unknown,
+  collection: Iterable<TArg>
+): TArg[];
+
+// curried
+function filter<TArg>(
+  predicate: (item: TArg, index: number) => unknown
+): ((col: Iterable<TArg>) => TArg[]);
+```
+
+#### reduce
+```ts
+function reduce<TCol, TRet>(
+  reducer: (previous: TRet, current: TCol, index: number) => TRet,
+  initValue: TRet,
+  collection: Iterable<TCol>
+): TRet;
+
+// Curry with init value
+function reduce<TCol, TRet>(
+  reducer: (previous: TRet, current: TCol, index: number) => TRet,
+  initValue: TRet
+): (collection: Iterable<TCol>) => TRet;
+
+// Curry without init value
+function reduce<TCol, TRet>(
+  reducer: (previous: TRet, current: TCol, index: number) => TRet,
+): (initValue: TRet) => (collection: Iterable<TCol>) => TRet;
+```
+
+Example:
+
+```ts
+import { reduce } from "ts-dash";
+
+reduce((acc, cur) => acc + cur, 0, [1, 2, 3]); // 6
+
+// Curried variants
+const sum = reduce((acc, cur) => acc + cur, 0);
+sum([1, 2, 3]); // 6
+
+const sum2 = reduce((acc, cur) => acc + cur);
+sum2(3, [1, 2, 3]); // 9
+sum2(3)([1, 2, 3]); // 9
+```
 
 ### Error helpers
 

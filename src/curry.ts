@@ -1,30 +1,34 @@
-// TODO fix types
+// whole implementation is based on jcalz answer here:
+// https://stackoverflow.com/questions/63903982/how-to-write-curry-and-compose-in-typescript-4
+type SameLength<T extends any[]> = Extract<{ [K in keyof T]: any }, any[]>
 
-type TupleOfLength<T extends readonly any[]> = Extract<{ [K in keyof T]: any }, any[]>
+type CurriedFn<TArgs extends any[], R> =
+  <P extends Partial<TArgs>>(...args: P) => P extends TArgs
+    ? R
+    : TArgs extends [...SameLength<P>, ...infer S]
+    ? S extends any[]
+      ? CurriedFn<S, R>
+      : never
+    : never;
 
-export type CurriedFn<TArgs extends readonly any[], TReturn> = <
-  TCurrentArgs extends TArgs extends [infer TFirstArg, ...infer TRest]
-    ?[TFirstArg, ...Partial<TRest>]
-    : never
->(...args: TCurrentArgs) => TCurrentArgs extends TArgs
-  ? TReturn
-  : TArgs extends [...TupleOfLength<TCurrentArgs>, ...infer TRest]
-  ? CurriedFn<TRest, TReturn>
-  : never;
+export type Curried<Fn extends (...args: any[]) => any> =
+  Fn extends (...args: infer TArgs) => infer TRet ? CurriedFn<TArgs, TRet> : never;
 
 /**
  * Takes a function that receives multiple arguments and returns a "curried"
  * version of that function that can take any number of those arguments and
  * if they are less than needed a new function that takes the rest of them will be returned
+ *
+ * Notice: type system won't work with generic functions, as Typescript lacks higher kinded types.
  */
 export function curry<
-  TArgs extends readonly any[],
+  TArgs extends any[],
   TReturn
 >(fn: (...args: TArgs) => TReturn): CurriedFn<TArgs, TReturn> {
-  return function curried(...args) {
-    if (args.length < fn.length){
-        return curried.bind(undefined, ...args)
+  return (...args: any[]): any => {
+    if (args.length < fn.length) {
+      return curry((fn as any).bind(undefined, ...args));
     }
-    return fn(...args);
+    return fn(...args as any);
   };
 }

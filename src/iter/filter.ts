@@ -1,5 +1,5 @@
 export function filter<TArg>(predicate: (item: TArg, index: number) => unknown): ((col: Iterable<TArg>) => TArg[]);
-export function filter<TArg>(predicate: (item: TArg, index: number) => unknown, collection?: Iterable<TArg>): TArg[];
+export function filter<TArg>(predicate: (item: TArg, index: number) => unknown, collection: Iterable<TArg>): TArg[];
 export function filter<TArg>(predicate: (item: TArg, index: number) => unknown, collection?: Iterable<TArg>) {
   function filterProcesser(collection: Iterable<TArg>) {
     const array = [];
