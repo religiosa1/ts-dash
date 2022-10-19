@@ -2,12 +2,12 @@
 // https://stackoverflow.com/questions/63903982/how-to-write-curry-and-compose-in-typescript-4
 type SameLength<T extends any[]> = Extract<{ [K in keyof T]: any }, any[]>
 
-type CurriedFn<TArgs extends any[], R> =
+export type CurriedFn<TArgs extends any[], TRet> =
   <P extends Partial<TArgs>>(...args: P) => P extends TArgs
-    ? R
-    : TArgs extends [...SameLength<P>, ...infer S]
-    ? S extends any[]
-      ? CurriedFn<S, R>
+    ? TRet
+    : TArgs extends [...SameLength<P>, ...infer TRest]
+    ? TRest extends any[]
+      ? CurriedFn<TRest, TRet>
       : never
     : never;
 

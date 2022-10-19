@@ -4,7 +4,7 @@ Collection of stuff one can need in almost every project.
 
 - enum helpers: getting enum values, avoiding reverse mapping
 - strictly typed pipe/flow functions for functional programming
-- strictly typed curry function
+- strictly typed curry function (has quirks with generics, see below)
 - strictly typed, curried, pipe-friendly iterator helpers (map, filter, reduce, zip, slice)
 - error handling functions
 - promisifed abortable timeout
@@ -12,6 +12,8 @@ Collection of stuff one can need in almost every project.
 ## Installation
 
 TODO
+
+As of now -- feel free to ctrl+c/ctrl+v parts you need in your project.
 
 ## Usage:
 ### Enum helpers
@@ -90,22 +92,13 @@ const res2 = processer(3); // "6"
 Strictly-typed auto-currying function.
 Please notice, this won't work with generic functions, so you'll have to
 curry them manually.
+This comes from the fact, that TS doesn't have higher kinded types.
 
 ```ts
-function reduce<TCol, TRet>(
-  reducer: (previous: TRet, current: TCol, index: number) => TRet,
-  initValue: TRet,
-  collection: Iterable<TCol>
-): TRet;
-// Curry with reducer and initial value
-function reduce<TCol, TRet>(
-  reducer: (previous: TRet, current: TCol, index: number) => TRet,
-  initValue: TRet
-): (collection: Iterable<TCol>) => TRet;
-// Reducer only curry
-function reduce<TCol, TRet>(
-  reducer: (previous: TRet, current: TCol, index: number) => TRet,
-): Curried<(initValue: TRet, collection: Iterable<TCol>) => TRet>;
+import { curry } from "ts-dash";
+
+const sum = curry((a: number, b: number) => a + b);
+sum(2, 3) === sum(2)(3);
 ```
 
 ### iterator-helpers
