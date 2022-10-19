@@ -191,6 +191,47 @@ sum2(3, [1, 2, 3]); // 9
 sum2(3)([1, 2, 3]); // 9
 ```
 
+#### zip
+Converting tuple of collectitons into array of tuples.
+When some collection is ended, zip exits.
+
+```ts
+type ArrayOfIterables<T extends readonly any[]> = {
+  [K in keyof T]: Iterable<T[K]>;
+}
+
+export function zip<T extends readonly any[]>(...collections: ArrayOfIterables<T>): Array<[...T]>;
+```
+
+Example:
+
+```ts
+zip([
+  [1, 2, 3],
+  ["a", "b", "c", "redundant"],
+]); // returns [[1, "a"], [2, "b"], [3, "c"]]
+```
+
+#### unzip
+Converting array of tuples into tuple of arrays
+
+```ts
+type ArrayOfArrays<T extends readonly any[]> = {
+  [K in keyof T]: Array<T[K]>;
+}
+
+function unzip<T extends any[]>(iterableOfTuples: Iterable<[...T]>): ArrayOfArrays<T>;
+```
+
+Example:
+```ts
+unzip([
+  [1, "a"],
+  [2, "b"],
+  [3, "c"]
+]); // returns [[1, 2, 3], ["a", "b", "c"]]
+```
+
 ### Error helpers
 
 #### attempt
